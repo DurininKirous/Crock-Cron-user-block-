@@ -1,0 +1,17 @@
+#!/bin/bash
+Deny=/etc/cron.deny
+Allow=/etc/cron.allow
+if [ -f $Allow ]; then
+  if [[ -z $(grep -w $1 $Allow ) ]];then
+     echo "The Cron.allow file exists and the user $1 is not there, nothing needs to be done. Completing the command."
+  else
+     sed -i "/$1/ d" $Allow
+  fi
+else
+  if [[ -z $(grep -w $1 $Deny) ]]; then
+  	echo $1 >> $Deny
+  else
+	echo "$1 is already blocked! Duplicate names will be deleted if they exist. Completing the command."
+	sort -u $Deny -o $Deny
+  fi
+fi
